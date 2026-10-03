@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { TemplateProps } from "@/types/resume";
 
 export function ClassicTemplate({ data, theme }: TemplateProps) {
