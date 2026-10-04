@@ -48,3 +48,8 @@ export async function getMyProfile() {
   const { data } = await supabase.from("profiles").select("first_name,last_name,email").eq("user_id", u.user.id).maybeSingle();
   return data;
 }
+
+export async function saveResumeContent(id: string, content: import("@/types/resume").ResumeData): Promise<void> {
+  const { error } = await supabase.from("resumes").update({ content: content as never }).eq("id", id);
+  if (error) throw error;
+}

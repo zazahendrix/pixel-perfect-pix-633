@@ -31,6 +31,7 @@ export interface Resume {
   primary_color: string;
   secondary_color: string;
   font_family: string;
+  content: unknown;
   created_at: string;
   updated_at: string;
 }
@@ -38,4 +39,26 @@ export interface Resume {
 export interface TemplateProps {
   data: ResumeData;
   theme: ResumeTheme;
+}
+
+export const emptyResumeData: ResumeData = {
+  personal: { firstName: "", lastName: "", title: "", email: "", phone: "", location: "" },
+  summary: "",
+  experiences: [],
+  education: [],
+  skills: [],
+  languages: [],
+};
+
+/** Merge stored (possibly partial) JSON content with empty defaults. */
+export function normalizeResumeData(raw: unknown): ResumeData {
+  const c = (raw && typeof raw === "object" ? raw : {}) as Partial<ResumeData>;
+  return {
+    personal: { ...emptyResumeData.personal, ...(c.personal ?? {}) },
+    summary: c.summary ?? "",
+    experiences: Array.isArray(c.experiences) ? c.experiences : [],
+    education: Array.isArray(c.education) ? c.education : [],
+    skills: Array.isArray(c.skills) ? c.skills : [],
+    languages: Array.isArray(c.languages) ? c.languages : [],
+  };
 }
