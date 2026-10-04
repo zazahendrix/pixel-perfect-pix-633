@@ -31,7 +31,7 @@ function LoginPage() {
     e.preventDefault();
     setError("");
     const parsed = emailSchema.safeParse(email);
-    if (!parsed.success) return setError(parsed.error.issues[0].message);
+    if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Erreur");
     setLoading(true);
     const { error } = await signIn(parsed.data, password);
     setLoading(false);

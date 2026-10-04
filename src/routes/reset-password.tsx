@@ -29,7 +29,7 @@ function Page() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     const p = passwordSchema.safeParse(pw);
-    if (!p.success) return setError(p.error.issues[0].message);
+    if (!p.success) return setError(p.error.issues[0]?.message ?? "Erreur");
     const { error } = await supabase.auth.updateUser({ password: p.data });
     if (error) return setError("Le lien a expiré ou est invalide. Recommencez la procédure.");
     toast.success("Mot de passe mis à jour");

@@ -40,7 +40,7 @@ function SignupPage() {
     e.preventDefault();
     setError("");
     const p = schema.safeParse(form);
-    if (!p.success) return setError(p.error.issues[0].message);
+    if (!p.success) return setError(p.error.issues[0]?.message ?? "Erreur");
     setLoading(true);
     const { data, error } = await signUp(p.data.email, p.data.password, p.data.firstName, p.data.lastName);
     setLoading(false);
