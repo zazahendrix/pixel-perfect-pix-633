@@ -24,8 +24,8 @@ function NewResume() {
 
   async function submit() {
     const trimmed = name.trim();
-    if (!trimmed) return toast.error("Donnez un nom à votre CV");
-    if (trimmed.length > 100) return toast.error("Nom trop long");
+    if (!trimmed) { toast.error("Donnez un nom à votre CV"); return; }
+    if (trimmed.length > 100) { toast.error("Nom trop long"); return; }
     setLoading(true);
     try {
       const r = await createResume({ name: trimmed, template });

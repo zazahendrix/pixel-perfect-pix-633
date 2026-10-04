@@ -27,7 +27,7 @@ function Page() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     const p = emailSchema.safeParse(email);
-    if (!p.success) return setError(p.error.issues[0].message);
+    if (!p.success) return setError(p.error.issues[0]?.message ?? "Erreur");
     await sendReset(p.data);
     setSent(true);
   }

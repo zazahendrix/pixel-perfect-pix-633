@@ -18,4 +18,4 @@ export const templates: TemplateDefinition[] = [
   { id: "minimal", label: "Minimaliste", description: "Épuré, beaucoup d'espace, l'essentiel en avant.", component: MinimalTemplate },
 ];
 
-export const getTemplate = (id: string) => templates.find((t) => t.id === id) ?? templates[0];
+export const getTemplate = (id: string) => templates.find((t) => t.id === id) ?? templates[0]!;
