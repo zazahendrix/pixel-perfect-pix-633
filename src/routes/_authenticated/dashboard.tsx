@@ -10,7 +10,7 @@ import {
 import { ResumeRenderer } from "@/components/resume/ResumeRenderer";
 import { getTemplate } from "@/components/resume/templates/registry";
 import { listResumes, deleteResume, duplicateResume, getMyProfile } from "@/lib/resumes";
-import type { Resume } from "@/types/resume";
+import { normalizeResumeData, type Resume } from "@/types/resume";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Mes CV — Curriculo" }, { name: "description", content: "Gérez vos CV." }] }),
@@ -57,7 +57,7 @@ function ResumeCard({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   return (
     <div className="flex flex-col rounded-2xl border bg-card p-3 shadow-soft">
       <div className="rounded-xl bg-surface p-4">
-        <ResumeRenderer template={resume.template} scale={8} theme={{ primaryColor: resume.primary_color, secondaryColor: resume.secondary_color, fontFamily: resume.font_family }} />
+        <ResumeRenderer template={resume.template} data={normalizeResumeData(resume.content)} scale={8} theme={{ primaryColor: resume.primary_color, secondaryColor: resume.secondary_color, fontFamily: resume.font_family }} />
       </div>
       <div className="px-1 pt-3">
         <h3 className="truncate font-semibold">{resume.name}</h3>
