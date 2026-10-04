@@ -46,6 +46,7 @@ export type Database = {
       }
       resumes: {
         Row: {
+          content: Json
           created_at: string
           font_family: string
           id: string
@@ -57,6 +58,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          content?: Json
           created_at?: string
           font_family?: string
           id?: string
@@ -68,6 +70,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          content?: Json
           created_at?: string
           font_family?: string
           id?: string

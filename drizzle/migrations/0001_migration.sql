@@ -1,0 +1,1 @@
+ALTER TABLE public.resumes ADD COLUMN content jsonb NOT NULL DEFAULT '{}'::jsonb;
