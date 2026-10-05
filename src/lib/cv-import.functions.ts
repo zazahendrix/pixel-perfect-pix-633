@@ -98,7 +98,8 @@ export const extractCv = createServerFn({ method: "POST" })
       json.output?.flatMap((o) => o.content ?? []).find((c) => c.type === "output_text")?.text;
     if (!text) return { ok: false as const, error: "Aucune information n'a pu être extraite de ce document." };
     try {
-      return { ok: true as const, data: JSON.parse(text) as unknown };
+      JSON.parse(text);
+      return { ok: true as const, json: text };
     } catch {
       return { ok: false as const, error: "Le document n'a pas pu être analysé." };
     }
