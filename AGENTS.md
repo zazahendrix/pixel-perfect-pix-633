@@ -12,3 +12,5 @@
 - Resume templates live in src/components/resume/templates and are registered in registry.ts; all share the ResumeData type — keeps adding templates trivial.
 - Private pages live under src/routes/_authenticated (client-only session gate redirecting to /login) — protects dashboard and resume pages.
 - Resume data access goes through src/lib/resumes.ts using the browser client with RLS — single place for database logic.
+- CV import: browser prepares the file (PDF→base64, DOCX→text via mammoth) and the authenticated server fn in src/lib/cv-import.functions.ts streams a Responses call with a JSON schema mirroring ResumeData — imports reuse the manual data model.
+- PDF export captures the rendered template DOM (html2canvas-pro + jsPDF) — output matches the chosen template exactly.

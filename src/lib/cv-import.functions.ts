@@ -73,9 +73,12 @@ export const extractCv = createServerFn({ method: "POST" })
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: { "Lovable-API-Key": apiKey, Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "X-Lovable-AIG-SDK": "fetch" },
       body: JSON.stringify({
         model: "openai/gpt-6-astra",
+        stream: true,
+        store: false,
+        reasoning: { effort: "low" },
         instructions,
         input: [{ role: "user", content }],
         text: { format: { type: "json_schema", name: "resume", schema, strict: true } },
@@ -89,13 +92,31 @@ export const extractCv = createServerFn({ method: "POST" })
       return { ok: false as const, error: "Le document n'a pas pu être analysé." };
     }
 
-    const json = (await res.json()) as {
-      output_text?: string;
-      output?: { type: string; content?: { type: string; text?: string }[] }[];
-    };
-    const text =
-      json.output_text ??
-      json.output?.flatMap((o) => o.content ?? []).find((c) => c.type === "output_text")?.text;
+    // Consume the SSE stream and keep the final text.
+    let text = "";
+    let buffer = "";
+    const reader = res.body!.getReader();
+    const decoder = new TextDecoder();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+        const payload = line.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+        try {
+          const ev = JSON.parse(payload) as { type?: string; delta?: string; response?: { status?: string } };
+          if (ev.type === "response.output_text.delta" && ev.delta) text += ev.delta;
+          if (ev.type === "response.failed" || ev.type === "error") {
+            console.error("CV extraction stream error", payload);
+            return { ok: false as const, error: "Le document n'a pas pu être analysé." };
+          }
+        } catch { /* partial line */ }
+      }
+    }
     if (!text) return { ok: false as const, error: "Aucune information n'a pu être extraite de ce document." };
     try {
       JSON.parse(text);

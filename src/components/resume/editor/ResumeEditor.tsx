@@ -9,6 +9,8 @@ import type { ResumeData } from "@/types/resume";
 interface Props {
   data: ResumeData;
   onChange: (data: ResumeData) => void;
+  /** Highlights non-empty fields after an import so the user can review them. */
+  highlight?: boolean;
 }
 
 function Section({ title, children, action }: { title: string; children: ReactNode; action?: ReactNode }) {
@@ -23,16 +25,20 @@ function Section({ title, children, action }: { title: string; children: ReactNo
   );
 }
 
+let highlightOn = false;
+const hl = (v: string) => (highlightOn && v.trim() ? "border-primary/50 bg-accent/40" : "");
+
 function Field({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs text-muted-foreground">{label}</Label>
-      <Input type={type} value={value} placeholder={placeholder} maxLength={200} onChange={(e) => onChange(e.target.value)} />
+      <Input className={hl(value)} type={type} value={value} placeholder={placeholder} maxLength={200} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }
 
-export function ResumeEditor({ data, onChange }: Props) {
+export function ResumeEditor({ data, onChange, highlight = false }: Props) {
+  highlightOn = highlight;
   const [skill, setSkill] = useState("");
   const setPersonal = (k: keyof ResumeData["personal"], v: string) => onChange({ ...data, personal: { ...data.personal, [k]: v } });
 
@@ -60,7 +66,7 @@ export function ResumeEditor({ data, onChange }: Props) {
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs text-muted-foreground">Profil / résumé</Label>
-          <Textarea rows={3} maxLength={800} value={data.summary} onChange={(e) => onChange({ ...data, summary: e.target.value })} placeholder="Quelques lignes pour vous présenter…" />
+          <Textarea className={hl(data.summary)} rows={3} maxLength={800} value={data.summary} onChange={(e) => onChange({ ...data, summary: e.target.value })} placeholder="Quelques lignes pour vous présenter…" />
         </div>
       </Section>
 
@@ -75,7 +81,7 @@ export function ResumeEditor({ data, onChange }: Props) {
               <Field label="Entreprise" value={e.company} onChange={(v) => updateList("experiences", i, { company: v })} />
               <Field label="Période" value={e.period} placeholder="2021 — Aujourd'hui" onChange={(v) => updateList("experiences", i, { period: v })} />
             </div>
-            <Textarea rows={2} maxLength={600} placeholder="Missions et réalisations" value={e.description} onChange={(ev) => updateList("experiences", i, { description: ev.target.value })} />
+            <Textarea className={hl(e.description)} rows={2} maxLength={600} placeholder="Missions et réalisations" value={e.description} onChange={(ev) => updateList("experiences", i, { description: ev.target.value })} />
             <Button size="sm" variant="ghost" className="text-destructive" onClick={() => removeAt("experiences", i)}><Trash2 /> Supprimer</Button>
           </div>
         ))}
