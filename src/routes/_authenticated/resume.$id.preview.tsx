@@ -14,16 +14,22 @@ export const Route = createFileRoute("/_authenticated/resume/$id/preview")({
 
 function Preview() {
   const { id } = Route.useParams();
+  return <ResumeLoader id={id}>{(r) => <PreviewBody r={r} />}</ResumeLoader>;
+}
+
+function PreviewBody({ r }: { r: Resume }) {
+  const ref = useRef<HTMLDivElement>(null);
   return (
-    <ResumeLoader id={id}>
-      {(r) => (
-        <main className="mx-auto max-w-3xl px-5 py-10">
-          <Link to="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Mes CV</Link>
-          <h1 className="mb-6 mt-4 font-display text-3xl">{r.name}</h1>
-          <ResumeRenderer template={r.template} data={normalizeResumeData(r.content)} scale={18} className="shadow-elegant"
-            theme={{ primaryColor: r.primary_color, secondaryColor: r.secondary_color, fontFamily: r.font_family }} />
-        </main>
-      )}
-    </ResumeLoader>
+    <main className="mx-auto max-w-3xl px-5 py-10">
+      <Link to="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Mes CV</Link>
+      <div className="mb-6 mt-4 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-3xl">{r.name}</h1>
+        <DownloadPdfButton target={ref} filename={r.name} variant="hero" />
+      </div>
+      <div ref={ref}>
+        <ResumeRenderer template={r.template} data={normalizeResumeData(r.content)} scale={18} className="rounded-none shadow-elegant"
+          theme={{ primaryColor: r.primary_color, secondaryColor: r.secondary_color, fontFamily: r.font_family }} />
+      </div>
+    </main>
   );
 }
