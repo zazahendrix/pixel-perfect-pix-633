@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { DownloadPdfButton } from "@/components/resume/DownloadPdfButton";
+import type { Resume } from "@/types/resume";
 import { ResumeLoader } from "@/components/resume/ResumeLoader";
 import { ResumeRenderer } from "@/components/resume/ResumeRenderer";
 import { normalizeResumeData } from "@/types/resume";
